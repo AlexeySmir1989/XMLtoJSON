@@ -1,1 +1,15 @@
-[{"id":1,"firstName":"John","lastName":"Smith","country":"USA","age":25}]
+[
+  {
+    "age": 25,
+    "country": "USA",
+    "firstName": "John",
+    "id": 1,
+    "lastName": "Smith"
+  },
+  {
+    "age": 23,
+    "country": "RU",
+    "firstName": "Inav",
+    "id": 2,
+    "lastName": "Petrov"
+  }]

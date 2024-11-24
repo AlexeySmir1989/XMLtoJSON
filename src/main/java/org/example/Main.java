@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
 
 
@@ -84,54 +82,28 @@ public class Main {
     }
 
     public static List<Employee> parseXML(String filename) throws ParserConfigurationException, SAXException, IOException {
-        List<Employee> list = new ArrayList<>();
-        try {
+            List<Employee> list = new ArrayList<>();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(filename);
-            NodeList nodeList = document.getChildNodes();
+            Document document = builder.parse(new File(filename));
+            document.getDocumentElement().normalize();
+            NodeList nodeList = document.getElementsByTagName("employee");
+
             for (int i = 0; i < nodeList.getLength(); i++) {
-                Node firstNode = nodeList.item(i);
-                if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element fstElmnt = (Element) firstNode;
-                    NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("id");
-                    Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
-                    NodeList fstNm = fstNmElmnt.getChildNodes();
-                    String ID = (fstNm.item(0)).getNodeValue();
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
+                    long id = Long.parseLong(getTagValue("id", element));
+                    String firstName = getTagValue("firstName", element);
+                    String lastName = getTagValue("lastName", element);
+                    String country = getTagValue("country", element);
+                    int age = Integer.parseInt(getTagValue("age", element));
 
-
-                    NodeList lstNmElmntLst2 = fstElmnt.getElementsByTagName("firstName");
-                    Element lstNmElmnt2 = (Element) lstNmElmntLst2.item(0);
-                    NodeList lstNm2 = lstNmElmnt2.getChildNodes();
-                    String FirstName = (lstNm2.item(0)).getNodeValue();
-
-
-                    NodeList lstNmElmntLst3 = fstElmnt.getElementsByTagName("lastName");
-                    Element lstNmElmnt3 = (Element) lstNmElmntLst3.item(0);
-                    NodeList lstNm3 = lstNmElmnt3.getChildNodes();
-                    String LastName = (lstNm3.item(0)).getNodeValue();
-
-
-                    NodeList lstNmElmntLst4 = fstElmnt.getElementsByTagName("country");
-                    Element lstNmElmnt4 = (Element) lstNmElmntLst4.item(0);
-                    NodeList lstNm4 = lstNmElmnt4.getChildNodes();
-                    String Country = (lstNm4.item(0)).getNodeValue();
-
-
-                    NodeList lstNmElmntLst5 = fstElmnt.getElementsByTagName("age");
-                    Element lstNmElmnt5 = (Element) lstNmElmntLst5.item(0);
-                    NodeList lstNm5 = lstNmElmnt5.getChildNodes();
-                    String Age = (lstNm5.item(0)).getNodeValue();
-
-                    Employee employee = new Employee(Long.parseLong(ID), FirstName, LastName, Country, Integer.parseInt(Age));
+                    Employee employee = new Employee(id, firstName, lastName, country, age);
                     list.add(employee);
                 }
-
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
+            return list;
     }
 
     private static String listToJson(List<Employee> list) {
@@ -148,5 +120,10 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private static String getTagValue(String tag, Element element) {
+        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+        Node node = (Node) nodeList.item(0);
+        return node.getNodeValue();
     }
 }
